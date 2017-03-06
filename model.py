@@ -55,7 +55,7 @@ def read_data(filename):
     data = tf.compat.as_str(f.read(f.namelist()[0])).split()
   return data
 
-words = read_data(filename)
+words = read_data(filename)[:1000000]
 print('Data size', len(words))
 
 # Step 2: Build the dictionary and replace rare words with UNK token.
@@ -117,6 +117,7 @@ def generate_batch(batch_size, num_skips, skip_window):
   return batch, labels
 
 batch, labels = generate_batch(batch_size=8, num_skips=2, skip_window=1)
+print(batch.shape, labels.shape)
 for i in range(8):
   print(batch[i], reverse_dictionary[batch[i]],
         '->', labels[i, 0], reverse_dictionary[labels[i, 0]])
