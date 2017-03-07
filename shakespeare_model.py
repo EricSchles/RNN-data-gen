@@ -26,19 +26,21 @@ sess = tf.Session()
 
 # Set RNN Parameters
 min_word_freq = 5  # Trim the less frequent words off
-rnn_size = 128  # RNN Model size, has to equal embedding size
+rnn_size = 1024  # RNN Model size, has to equal embedding size
 epochs = 10  # Number of epochs to cycle through data
-batch_size = 100  # Train on this many examples at once
+batch_size = 32  # Train on this many examples at once
 learning_rate = 0.001  # Learning rate
-training_seq_len = 50  # how long of a word group to consider
+training_seq_len = 11  # how long of a word group to consider
 embedding_size = rnn_size
 save_every = 500  # How often to save model checkpoints
 eval_every = 50  # How often to evaluate the test sentences
-prime_texts = ['thou art more', 'to be or not to', 'wherefore art thou']
+prime_texts = ['1_yr_srv_0'] # EOD10_ND_3'] MAR_STAT_2', '1_yr_srv_0 MAR_STAT_1', '1_yr_srv_0 MAR_STAT_3', '1_yr_srv_0 MAR_STAT_9', '1_yr_srv_0 MAR_STAT_4', '1_yr_srv_0 MAR_STAT_5', '1_yr_srv_0 MAR_STAT_4', '1_yr_srv_0 MAR_STAT_2', '1_yr_srv_0 MAR_STAT_9', '1_yr_srv_0', '1_yr_srv_0 MAR_STAT_5']
 
 # Download/store Shakespeare data
 data_dir = 'temp'
+data_dir = 'data'
 data_file = 'shakespeare.txt'
+data_file = 'feature_paragraph.txt'
 model_path = 'shakespeare_model'
 full_model_dir = os.path.join(data_dir, model_path)
 
@@ -55,6 +57,7 @@ if not os.path.exists(data_dir):
     os.makedirs(data_dir)
 
 print('Loading Shakespeare Data')
+print('Loading the feature data')
 # Check if file is downloaded.
 if not os.path.isfile(os.path.join(data_dir, data_file)):
     print('Not found, downloading Shakespeare texts from www.gutenberg.org')
@@ -74,14 +77,22 @@ if not os.path.isfile(os.path.join(data_dir, data_file)):
     with open(os.path.join(data_dir, data_file), 'w') as out_conn:
         out_conn.write(s_text)
 else:
+    print('opening file: ', data_file)
     # If file has been saved, load from that file
     with open(os.path.join(data_dir, data_file), 'r') as file_conn:
         s_text = file_conn.read().replace('\n', '')
 
 # Clean text
+print('first line: ', s_text[:100])
+
+print('1_yr_srv_0' in s_text)
+
 print('Cleaning Text')
-s_text = re.sub(r'[{}]'.format(punctuation), ' ', s_text)
-s_text = re.sub('\s+', ' ', s_text).strip().lower()
+#s_text = re.sub(r'[{}]'.format(punctuation), ' ', s_text)
+#s_text = re.sub('\s+', ' ', s_text).strip().lower()
+
+print('first line: ', s_text[:100])
+print('1_yr_srv_0' in s_text)
 
 
 # Build word vocabulary function
@@ -101,7 +112,7 @@ def build_vocab(text, min_word_freq):
 
 
 # Build Shakespeare vocabulary
-print('Building Shakespeare Vocab')
+print('Building Vocab')
 ix2vocab, vocab2ix = build_vocab(s_text, min_word_freq)
 vocab_size = len(ix2vocab) + 1
 print('Vocabulary Length = {}'.format(vocab_size))
